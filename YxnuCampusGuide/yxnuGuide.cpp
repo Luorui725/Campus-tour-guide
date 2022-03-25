@@ -4,15 +4,15 @@
 #include <stdio.h>
 
 //保存图形数据的顺序表，目的是方便调用图形参数
-typedef struct {			
-	int *x;
-	int *y;
-	int *width;
-	int *height;
+typedef struct {
+	int* x;
+	int* y;
+	int* width;
+	int* height;
 }GraphSqList;
 
 //构造一个图形顺序表
-void initGraphSqList(GraphSqList* L)		
+void initGraphSqList(GraphSqList* L)
 {
 	L->x = (int*)malloc(sizeof(int));
 	L->y = (int*)malloc(sizeof(int));
@@ -22,12 +22,24 @@ void initGraphSqList(GraphSqList* L)
 }
 
 //输入一个图形的数据进顺序表（表指针，图形编号，宽度，高度，x坐标，y坐标）
-void insertGraphSqList(GraphSqList* L,int i, int width, int height, int x, int y)	
+void insertGraphSqList(GraphSqList* L, int i, int width, int height, int x, int y)
 {
 	L->x[i] = x;
 	L->y[i] = y;
 	L->width[i] = width;
 	L->height[i] = height;
+}
+
+//创建一个按钮
+void UI_button(int x, int y, int w, int h, const char* text)
+{
+	setfillcolor(GREEN);
+	fillroundrect(x, y, x + w, y + h, 10, 10);
+	setbkmode(TRANSPARENT);
+	settextstyle(16, 0, "楷体");
+	int tx = x + (w - textwidth(text)) / 2;
+	int ty = y + (h - textheight(text)) / 2;
+	outtextxy(tx, ty, text);
 }
 
 void Menu_UI()
@@ -37,26 +49,40 @@ void Menu_UI()
 	ui = (GraphSqList*)malloc(sizeof(GraphSqList));
 
 	/*创建一个960 * 720窗口并设置背景为白色*/
-	initgraph(960, 720,EW_SHOWCONSOLE);
+	initgraph(960, 720, EW_SHOWCONSOLE);
 	setbkcolor(WHITE);
 	cleardevice();
 
 	/*将窗口数据录入顺序表，标号为0*/
 	initGraphSqList(ui);
 	insertGraphSqList(ui, 0, 960, 720, 0, 0);
-	
+
 	/*title设置*/
-	//构造矩形，标号为1
+	//构造标题，标号为1
 	setfillcolor(GREEN);
-	insertGraphSqList(ui, 1, 200, 30, (ui->width[0] - 200) / 2, 30);	
+	insertGraphSqList(ui, 1, 200, 30, (ui->width[0] - 200) / 2, 30);
 	solidrectangle(ui->x[1], ui->y[1], ui->x[1] + ui->width[1], ui->y[1] + ui->height[1]);
 	//创建标题文本
 	settextcolor(RGB(173, 0, 74));
 	settextstyle(16, 0, "楷体");
 	setbkmode(TRANSPARENT);
 	char title[] = "玉溪师范学院校园导游";
-	
 	outtextxy(ui->x[1] + ((ui->width[1] - textwidth(title)) / 2), ui->y[1] + ((ui->height[1] - textheight(title)) / 2), title);
+
+	/*设置模块一 “进入地图”*/
+	//构造按钮1，标号为2
+	//setfillcolor(GREEN);
+	insertGraphSqList(ui, 2, 200, 30, ui->x[1], 130);
+	UI_button(ui->x[2], ui->y[2], ui->width[2], ui->height[2], "进入地图");
+
+	ExMessage msg;
+	if (peekmessage(&msg, EM_MOUSE)) {
+		switch (msg.message)
+		{
+		case WM_LBUTTONDOWN:
+			outtextxy(400, 400, "鼠标左键按下");
+		}
+	}
 }
 
 int main()
